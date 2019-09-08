@@ -37,125 +37,100 @@ void Seesaw::update()
 /**
  * 走行を行う
  */
+long start_time = 0;
 void Seesaw::run()
 {
+    int fwd;
     switch (m_sequence_num)
     {
+    // ゴール通知
     case 0:
-
-        // 尻尾をつく
-        ev3_speaker_play_tone(262, 100);
-        landing();
-
-        ev3_speaker_play_tone(262, 100);
-        m_clock.sleep(1000);
-
-        ev3_speaker_play_tone(262, 100);
-        upBody();
-
-        m_clock.sleep(1000);
-
+        ev3_speaker_play_tone(262, 500);
+        m_seesaw_start_dis = m_guage->getRobotDis();
+        m_line_tracer->setPidParm(m_run_pid_param[0]);
         m_sequence_num++;
         break;
 
+    // シーソー検知まで減速
     case 1:
-        // 高姿勢で前進
-        lineRun(15, 0, 15);
+        // ゴールゲートから遠ざかるほど前進量を下げる
+        // fwd = 100 - 150 * (m_guage->getRobotDis() - m_seesaw_start_dis);
 
-        if (m_guage->getSonarDistance() < 0.05)
+        // // 前進量の下限は20
+        // if (fwd < 20)
+        fwd = 20;
+
+        lineRun(1, fwd, 0, 35);
+
+        // シーソーを検知
+        if (abs(m_guage->getPitchVel()) > 150 && (m_guage->getRobotDis() - m_seesaw_start_dis) > 0.4)
         {
-            m_clock.sleep(10);
-            if (m_guage->getSonarDistance() < 0.05)
-            {
-                m_sequence_num++;
-            }
+            ev3_speaker_play_tone(262, 100);
+            m_seesaw_start_dis = m_guage->getRobotDis();
+            m_line_tracer->setPidParm(m_run_pid_param[1]);
+            m_sequence_num++;
         }
         break;
 
+    // 後進
     case 2:
-        // 倒す
-        ev3_speaker_play_tone(262, 100);
-        downBody();
+        lineRun(1, -32, 0, 35);
+        if (m_guage->getRobotDis() - m_seesaw_start_dis < -0.15)
+        {
+            ev3_speaker_play_tone(262, 100);
+            m_sequence_num++;
+        }
+        break;
 
-        m_wheel_R.reset();
-        m_wheel_L.reset();
-        m_clock.sleep(1000);
-        ev3_speaker_play_tone(262, 100);
-        m_sequence_num++;
-
+    // 前進
     case 3:
-        // 低い姿勢で前進
-        lineRun(15, 1, 5);
-
-        if (m_guage->getRobotDis() > 0.15)
+        lineRun(1, 80, 0, 35);
+        if (m_guage->getRobotDis() - m_seesaw_start_dis > 0)
         {
             ev3_speaker_play_tone(262, 100);
+            start_time = m_clock.now();
+            m_line_tracer->setPidParm(m_run_pid_param[0]);
             m_sequence_num++;
         }
         break;
 
+    // 前進
     case 4:
-        // 低い姿勢で前進
-        lineRun(-15, 1, 5);
-
-        if (m_guage->getRobotDis() < -0.2)
+        m_gyro.setOffset(-31);
+        lineRun(1, 90, 0, 35);
+        if (m_clock.now() - start_time > 200)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
         }
         break;
 
+    // 前進
     case 5:
-        // 低い姿勢で前進
-        lineRun(15, 1, 5);
-
-        if (m_guage->getRobotDis() > 0.15)
+        m_gyro.setOffset(0);
+        lineRun(1, 90, 0, 35);
+        if (m_guage->getRobotDis() - m_seesaw_start_dis > 0.10)
         {
             ev3_speaker_play_tone(262, 100);
+            start_time = m_clock.now();
             m_sequence_num++;
         }
         break;
 
+    // 前進
     case 6:
-        // 低い姿勢で前進
-        lineRun(-15, 1, 5);
-
-        if (m_guage->getRobotDis() < -0.2)
+        lineRun(1, 0, 0, 35);
+        if (m_clock.now() - start_time > 700)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
         }
         break;
 
+    // 前進
     case 7:
-        // 低い姿勢で前進
-        lineRun(15, 1, 5);
-
-        if (m_guage->getRobotDis() > 0.15)
-        {
-            ev3_speaker_play_tone(262, 100);
-            m_sequence_num++;
-        }
+        lineRun(1, 20, 0, 35);
         break;
-
-    case 8:
-        // 高姿勢で前進
-        lineRun(15, 0, 15);
-
-        if (m_guage->getRobotDis() > 0.45)
-        {
-            ev3_speaker_play_tone(262, 100);
-            m_wheel_R.reset();
-            m_wheel_L.reset();
-            m_sequence_num++;
-        }
-        break;
-
-    case 9:
-        m_wheel_R.reset();
-        m_wheel_L.reset();
-        break;
-
     default:
         break;
     }
@@ -177,29 +152,15 @@ void Seesaw::downBody()
  * ライントレースする
  *
  */
-void Seesaw::lineRun(int forward, int pid_index, int target)
+void Seesaw::lineRun(bool is_inverted, int forward, int pid_index, int target)
 {
-    m_line_tracer->setIsInverted(false);
+    m_line_tracer->setIsInverted(is_inverted);
     m_line_tracer->setForward(forward);
     m_line_tracer->setCurvature(0);
-    m_line_tracer->setPidParm(m_run_pid_param[pid_index]);
     m_line_tracer->setColorTarget(target);
     m_line_tracer->run();
 }
 
 void Seesaw::landing()
 {
-    m_tail->setAngle(75);
-    m_tail->setMaxSpeed(40);
-    m_wheel_L.setPWM(90);
-    m_wheel_R.setPWM(90);
-    m_clock.sleep(150);
-
-    m_wheel_R.reset();
-    m_wheel_L.reset();
-
-    // g_wheel_L.setPWM(0);
-    // g_wheel_R.setPWM(0);
-    // g_wheel_L.setBrake(true);
-    // g_wheel_R.setBrake(true);
 }

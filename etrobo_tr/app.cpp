@@ -227,7 +227,7 @@ void tracer_task(intptr_t exinf)
         g_tail_controller->setAngle(70);
         g_tail_controller->setMaxSpeed(40);
 
-        is_goal = g_section_tracer->run();
+        is_goal = g_section_tracer->run(g_bt->getStartSectionNum());
     }
     else
     {

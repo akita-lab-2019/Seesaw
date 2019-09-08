@@ -23,7 +23,7 @@ public:
                   Section *section,
                   LineTracer *line_tracer);
 
-    bool run();
+    bool run(int start_section_num);
 
 private:
     GuageManager *m_robot_info;
@@ -31,7 +31,7 @@ private:
     LineTracer *m_line_tracer;
 
     bool m_is_initialized;
-    int m_section_num = 14;
+    int m_section_num = 0;
 };
 
 #endif // EV3_SECTION_TRACER_H_
