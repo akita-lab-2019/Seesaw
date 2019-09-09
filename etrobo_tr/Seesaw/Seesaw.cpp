@@ -40,7 +40,8 @@ void Seesaw::update()
 long start_time = 0;
 void Seesaw::run()
 {
-    int fwd;
+    float seesaw_dis = m_guage->getRobotDis() - m_seesaw_start_dis;
+
     switch (m_sequence_num)
     {
     // ゴール通知
@@ -51,19 +52,12 @@ void Seesaw::run()
         m_sequence_num++;
         break;
 
-    // シーソー検知まで減速
+    // 減速
     case 1:
-        // ゴールゲートから遠ざかるほど前進量を下げる
-        // fwd = 100 - 150 * (m_guage->getRobotDis() - m_seesaw_start_dis);
-
-        // // 前進量の下限は20
-        // if (fwd < 20)
-        fwd = 20;
-
-        lineRun(1, fwd, 0, 35);
+        lineRun(1, 50, 0, 35);
 
         // シーソーを検知
-        if (abs(m_guage->getPitchVel()) > 150 && (m_guage->getRobotDis() - m_seesaw_start_dis) > 0.4)
+        if (seesaw_dis > 0.4)
         {
             ev3_speaker_play_tone(262, 100);
             m_seesaw_start_dis = m_guage->getRobotDis();
@@ -72,9 +66,36 @@ void Seesaw::run()
         }
         break;
 
-    // 後進
+    // シーソー検知まで減速
     case 2:
-        lineRun(1, -32, 0, 35);
+        lineRun(1, 20, 0, 35);
+
+        // シーソーを検知
+        if (abs(m_guage->getPitchVel()) > 150)
+        {
+            ev3_speaker_play_tone(262, 100);
+            m_seesaw_start_dis = m_guage->getRobotDis();
+            m_line_tracer->setPidParm(m_run_pid_param[1]);
+            start_time = m_clock.now();
+            m_sequence_num++;
+        }
+        break;
+
+    // 後進
+    case 3:
+        m_gyro.setOffset(10);
+        lineRun(1, -100, 0, 35);
+        if (m_clock.now() - start_time > 200)
+        {
+            ev3_speaker_play_tone(262, 100);
+            m_sequence_num++;
+        }
+        break;
+
+    // 後進
+    case 4:
+        m_gyro.setOffset(0);
+        lineRun(1, -20, 0, 35);
         if (m_guage->getRobotDis() - m_seesaw_start_dis < -0.15)
         {
             ev3_speaker_play_tone(262, 100);
@@ -83,7 +104,7 @@ void Seesaw::run()
         break;
 
     // 前進
-    case 3:
+    case 5:
         lineRun(1, 80, 0, 35);
         if (m_guage->getRobotDis() - m_seesaw_start_dis > 0)
         {
@@ -95,7 +116,7 @@ void Seesaw::run()
         break;
 
     // 前進
-    case 4:
+    case 6:
         m_gyro.setOffset(-31);
         lineRun(1, 90, 0, 35);
         if (m_clock.now() - start_time > 200)
@@ -106,7 +127,7 @@ void Seesaw::run()
         break;
 
     // 前進
-    case 5:
+    case 7:
         m_gyro.setOffset(0);
         lineRun(1, 90, 0, 35);
         if (m_guage->getRobotDis() - m_seesaw_start_dis > 0.10)
@@ -118,7 +139,7 @@ void Seesaw::run()
         break;
 
     // 前進
-    case 6:
+    case 8:
         lineRun(1, 0, 0, 35);
         if (m_clock.now() - start_time > 700)
         {
@@ -128,7 +149,7 @@ void Seesaw::run()
         break;
 
     // 前進
-    case 7:
+    case 9:
         lineRun(1, 20, 0, 35);
         break;
     default:
