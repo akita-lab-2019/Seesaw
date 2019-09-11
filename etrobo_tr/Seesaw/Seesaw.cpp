@@ -46,8 +46,6 @@ void Seesaw::run()
     {
     // ゴール通知
     case 0:
-        m_tail->setAngle(10);
-        m_tail->setMaxSpeed(40);
         m_seesaw_start_dis = m_guage->getRobotDis();
         m_line_tracer->setPidParm(m_run_pid_param[0]);
         m_sequence_num++;
@@ -98,27 +96,31 @@ void Seesaw::run()
     case 3:
         m_gyro.setOffset(-4);
         lineRun(1, 130, 0, 35);
-        // if (m_guage->getRobotDis() - m_seesaw_start_dis > 0.15)
-        // {
-        //     ev3_speaker_play_tone(262, 100);
-        //     start_time = m_clock.now();
-        //     m_sequence_num++;
-        // }
-        break;
 
-    // 前進
-    case 4:
-        lineRun(1, 0, 0, 35);
-        if (m_clock.now() - start_time > 700)
+        if (seesaw_dis > 0.65)
         {
             ev3_speaker_play_tone(262, 100);
+            start_time = m_clock.now();
             m_sequence_num++;
         }
         break;
 
     // 前進
+    case 4:
+        m_tail->setAngle(108);
+        m_tail->setMaxSpeed(80);
+        m_wheel_L.setPWM(95);
+        m_wheel_R.setPWM(95);
+        m_clock.sleep(200);
+        m_wheel_L.reset();
+        m_wheel_R.reset();
+        m_clock.sleep(3000);
+        m_sequence_num++;
+        break;
+
+    // 前進
     case 5:
-        lineRun(1, 20, 0, 35);
+        lineRun(0, 20, 0, 35);
         break;
     default:
         break;
