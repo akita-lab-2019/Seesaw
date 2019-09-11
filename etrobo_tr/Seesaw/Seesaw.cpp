@@ -54,9 +54,6 @@ void Seesaw::run()
     // 減速
     case 1:
         lineRun(1, 80, 0, 35);
-
-        // シーソーを検知
-        // if (seesaw_dis > 0.57)
         if (seesaw_dis > 0.25)
         {
             ev3_led_set_color(LED_ORANGE);
@@ -66,60 +63,93 @@ void Seesaw::run()
         }
         break;
 
-    // // 減速
-    // case 2:
-    //     lineRun(1, 80, 0, 35);
-
-    //     // シーソーを検知
-    //     if (abs(m_guage->getPitchVel()) > 150)
-    //     {
-    //         ev3_led_set_color(LED_GREEN);
-    //         ev3_speaker_play_tone(262, 100);
-    //         m_seesaw_start_dis = m_guage->getRobotDis();
-    //         m_line_tracer->setPidParm(m_run_pid_param[1]);
-    //         m_sequence_num++;
-    //     }
-    //     break;
-
     // 前進
     case 2:
-        m_gyro.setOffset(-30);
-        lineRun(1, 100, 0, 35);
-        if (m_clock.now() - start_time > 150)
-        {
-            ev3_speaker_play_tone(262, 100);
-            m_sequence_num++;
-        }
+        m_tail->setAngle(70);
+        m_tail->setMaxSpeed(40);
+        m_wheel_L.setPWM(90);
+        m_wheel_R.setPWM(90);
+        m_clock.sleep(150);
+
+        m_guage->setOdomOffset(0);
+        m_wheel_L.reset();
+        m_wheel_R.reset();
+        m_clock.sleep(1000);
+
+        m_tail->setAngle(1000);
+        m_tail->setMaxSpeed(61);
+        m_wheel_L.setPWM(-50);
+        m_wheel_R.setPWM(-50);
+        m_clock.sleep(140);
+
+        m_tail->setAngle(93);
+        m_tail->setMaxSpeed(90);
+        m_wheel_L.reset();
+        m_wheel_R.reset();
+        m_clock.sleep(1000);
+
+        m_sequence_num++;
         break;
 
     // 前進
     case 3:
-        m_gyro.setOffset(-4);
-        lineRun(1, 130, 0, 35);
+        lineRun(0, 5, 1, 15);
 
-        if (seesaw_dis > 0.65)
+        if (m_guage->getRobotDis() > 0.6)
         {
             ev3_speaker_play_tone(262, 100);
-            start_time = m_clock.now();
+            m_wheel_L.reset();
+            m_wheel_R.reset();
+            m_clock.sleep(1000);
             m_sequence_num++;
         }
         break;
 
     // 前進
     case 4:
-        m_tail->setAngle(108);
-        m_tail->setMaxSpeed(80);
-        m_wheel_L.setPWM(95);
-        m_wheel_R.setPWM(95);
-        m_clock.sleep(200);
+        m_tail->setAngle(1000);
+        m_tail->setMaxSpeed(100);
+        m_wheel_L.setPWM(-20);
+        m_wheel_R.setPWM(-20);
+        m_clock.sleep(400); // 200 to 300
+
+        m_tail->setAngle(93);
+        m_tail->setMaxSpeed(90);
+        m_wheel_L.setPWM(40);
+        m_wheel_R.setPWM(40);
+        m_clock.sleep(380);
+
         m_wheel_L.reset();
         m_wheel_R.reset();
-        m_clock.sleep(3000);
+        m_clock.sleep(1000);
+
         m_sequence_num++;
         break;
 
     // 前進
     case 5:
+        m_wheel_L.reset();
+        m_wheel_R.reset();
+        break;
+
+    // 前進
+    case 6:
+        m_wheel_R.setPWM(4);
+        m_wheel_L.reset();
+        if (m_guage->getWheelPos(GuageManager::R) > 120)
+        {
+            m_sequence_num++;
+        }
+        break;
+
+    // 前進
+    case 7:
+        m_wheel_R.setPWM(4);
+        m_wheel_L.setPWM(4);
+        break;
+
+    // 前進
+    case 8:
         lineRun(0, 20, 0, 35);
         break;
     default:
