@@ -79,9 +79,9 @@ void Seesaw::run()
 
         // 姿勢上げ
         m_tail->setAngle(1000);
-        m_tail->setMaxSpeed(55);
-        m_wheel_L.setPWM(-40);
-        m_wheel_R.setPWM(-40);
+        m_tail->setMaxSpeed(50);
+        m_wheel_L.setPWM(-35);
+        m_wheel_R.setPWM(-35);
         m_clock.sleep(100);
 
         m_tail->setAngle(95);
@@ -120,7 +120,7 @@ void Seesaw::run()
             m_wheel_R.setPWM(-55);
             m_clock.sleep(220);
 
-            m_tail->setAngle(120);
+            m_tail->setAngle(115);
             m_tail->setMaxSpeed(90);
             m_wheel_L.reset();
             m_wheel_R.reset();
@@ -154,24 +154,35 @@ void Seesaw::run()
 
     // 昇段
     case 4:
-        m_tail->setAngle(1000);
-        m_tail->setMaxSpeed(20);
-        m_wheel_L.setPWM(-8);
-        m_wheel_R.setPWM(-8);
-        if (m_guage->getWheelPos(GuageManager::L) < -20)
+        m_wheel_L.setPWM(-4);
+        m_wheel_R.setPWM(-4);
+
+        if (m_guage->getWheelPos(GuageManager::L) < -10)
         {
-            m_tail->setAngle(105);
-            m_tail->setMaxSpeed(22);
             m_sequence_num++;
         }
         break;
 
     // 昇段
     case 5:
-        m_tail->setMaxSpeed(100);
-        m_wheel_L.setPWM(100);
-        m_wheel_R.setPWM(100);
-        if (m_guage->getWheelPos(GuageManager::L) > 180)
+        m_tail->setAngle(1000);
+        m_tail->setMaxSpeed(18);
+        m_wheel_L.setPWM(-4);
+        m_wheel_R.setPWM(-4);
+
+        if (m_guage->getWheelPos(GuageManager::L) < -20)
+        {
+            m_wheel_L.setPWM(100);
+            m_wheel_R.setPWM(100);
+            m_tail->setAngle(105);
+            m_tail->setMaxSpeed(90);
+            m_sequence_num++;
+        }
+        break;
+
+    // 昇段
+    case 6:
+        if (m_guage->getRobotDis() > 0.1)
         {
             m_wheel_L.reset();
             m_wheel_R.reset();
@@ -181,14 +192,25 @@ void Seesaw::run()
         break;
 
     // 前進
-    case 6:
-        lineRun(0, 4, 1, 25);
-        if (m_guage->getRobotDis() > 0.14)
+    case 7:
+        lineRun(0, 6, 1, 25);
+        if (abs(m_guage->getPitchVel()) > 80)
         {
+            m_tail->setAngle(20);
+            m_tail->setMaxSpeed(90);
+            // m_wheel_L.setPWM(100);
+            // m_wheel_R.setPWM(100);
             m_wheel_L.reset();
             m_wheel_R.reset();
+            m_clock.sleep(400);
             m_sequence_num++;
         }
+        break;
+
+    // 前進
+    case 8:
+        m_wheel_L.reset();
+        m_wheel_R.reset();
         break;
 
     default:
