@@ -48,7 +48,13 @@ void Seesaw::run()
     case 0:
         m_seesaw_start_dis = m_guage->getRobotDis();
         m_line_tracer->setPidParm(m_run_pid_param[0]);
-        m_sequence_num++;
+        // m_sequence_num++;
+        m_sequence_num = 3;
+
+        m_wheel_L.reset();
+        m_wheel_R.reset();
+        m_tail->setAngle(55);
+        m_clock.sleep(3000);
         break;
 
     // ライントレース
@@ -103,40 +109,42 @@ void Seesaw::run()
         {
             ev3_speaker_play_tone(262, 100);
 
-            // 左右にじたばた
-            for (int i = 0; i < 3; i++)
-            {
-                m_wheel_L.setPWM(8);
-                m_wheel_R.reset();
-                m_clock.sleep(800);
-                m_wheel_L.reset();
-                m_wheel_R.setPWM(8);
-                m_clock.sleep(800);
-            }
+            // // 左右にじたばた
+            // for (int i = 0; i < 3; i++)
+            // {
+            //     m_wheel_L.setPWM(8);
+            //     m_wheel_R.reset();
+            //     m_clock.sleep(800);
+            //     m_wheel_L.reset();
+            //     m_wheel_R.setPWM(8);
+            //     m_clock.sleep(800);
+            // }
 
-            m_tail->setAngle(1000);
-            m_tail->setMaxSpeed(60);
-            m_wheel_L.setPWM(-55);
-            m_wheel_R.setPWM(-55);
-            m_clock.sleep(220);
+            // m_tail->setAngle(1000);
+            // m_tail->setMaxSpeed(60);
+            // m_wheel_L.setPWM(-55);
+            // m_wheel_R.setPWM(-55);
+            // m_clock.sleep(220);
 
-            m_tail->setAngle(115);
-            m_tail->setMaxSpeed(90);
+            // m_tail->setAngle(115);
+            // m_tail->setMaxSpeed(90);
+            // m_wheel_L.reset();
+            // m_wheel_R.reset();
+            // m_clock.sleep(1000);
+
+            // // 左右にじたばた
+            // for (int i = 0; i < 3; i++)
+            // {
+            //     m_wheel_L.setPWM(8);
+            //     m_wheel_R.reset();
+            //     m_clock.sleep(800);
+            //     m_wheel_L.reset();
+            //     m_wheel_R.setPWM(8);
+            //     m_clock.sleep(800);
+            // }
+
             m_wheel_L.reset();
             m_wheel_R.reset();
-            m_clock.sleep(1000);
-
-            // 左右にじたばた
-            for (int i = 0; i < 3; i++)
-            {
-                m_wheel_L.setPWM(8);
-                m_wheel_R.reset();
-                m_clock.sleep(800);
-                m_wheel_L.reset();
-                m_wheel_R.setPWM(8);
-                m_clock.sleep(800);
-            }
-
             m_tail->setAngle(115);
             m_clock.sleep(3000);
 
@@ -176,7 +184,7 @@ void Seesaw::run()
         m_wheel_L.setPWM(-11);
         m_wheel_R.setPWM(-11);
 
-        if (m_guage->getWheelPos(GuageManager::L) < -18)
+        if (m_guage->getWheelPos(GuageManager::L) < -20)
         {
             m_sequence_num++;
         }
@@ -202,7 +210,7 @@ void Seesaw::run()
         m_tail->setAngle(92);
         m_tail->setMaxSpeed(100);
 
-        if (m_guage->getRobotDis() > 0.2)
+        if (m_guage->getRobotDis() > 0.15)
         {
             m_wheel_L.reset();
             m_wheel_R.reset();
@@ -210,9 +218,9 @@ void Seesaw::run()
 
             m_tail->setAngle(1000);
             m_tail->setMaxSpeed(50);
-            m_wheel_L.setPWM(-35);
-            m_wheel_R.setPWM(-35);
-            m_clock.sleep(110);
+            m_wheel_L.setPWM(-33);
+            m_wheel_R.setPWM(-33);
+            m_clock.sleep(130);
 
             m_tail->setAngle(108);
             m_tail->setMaxSpeed(90);
@@ -226,7 +234,7 @@ void Seesaw::run()
     // 前進
     case 8:
         lineRun(0, 4, 1, 25);
-        if (abs(m_guage->getPitchVel()) > 40)
+        if (m_guage->getPitchVel() > 40)
         {
             m_wheel_L.reset();
             m_wheel_R.reset();
@@ -237,10 +245,10 @@ void Seesaw::run()
     // 前進
     case 9:
         m_tail->setAngle(-1000);
-        m_tail->setMaxSpeed(58);
-        m_wheel_L.setPWM(33);
-        m_wheel_R.setPWM(33);
-        if (m_guage->getRobotDis() > 0.02)
+        m_tail->setMaxSpeed(55);
+        m_wheel_L.setPWM(35);
+        m_wheel_R.setPWM(35);
+        if (m_guage->getRobotDis() > 0.03)
         {
             m_sequence_num++;
         }
@@ -248,10 +256,10 @@ void Seesaw::run()
 
     // 前進
     case 10:
-        m_tail->setAngle(55);
-        m_tail->setMaxSpeed(40);
-        m_wheel_L.setPWM(33);
-        m_wheel_R.setPWM(33);
+        m_tail->setAngle(52);
+        m_tail->setMaxSpeed(55);
+        m_wheel_L.setPWM(30);
+        m_wheel_R.setPWM(30);
         if (m_guage->getRobotDis() > 0.10)
         {
             m_wheel_L.reset();
@@ -263,49 +271,90 @@ void Seesaw::run()
 
     // 前進
     case 11:
-        m_wheel_L.setPWM(30);
-        m_wheel_R.setPWM(30);
-        if (m_guage->getRobotDis() > 0.35)
+        m_tail->setAngle(52);
+        m_tail->setMaxSpeed(60);
+        m_wheel_L.setPWM(-3);
+        m_wheel_R.setPWM(-3);
+
+        if (m_guage->getPitchVel() < -30)
+        {
+            m_wheel_L.reset();
+            m_wheel_R.reset();
+            m_sequence_num++;
+        }
+        break;
+
+    // 前進
+    case 12:
+        m_tail->setAngle(1000);
+        m_tail->setMaxSpeed(100);
+        m_wheel_L.setPWM(-30);
+        m_wheel_R.setPWM(-30);
+        m_clock.sleep(200);
+
+        m_tail->setAngle(115);
+        m_tail->setMaxSpeed(40);
+        m_wheel_L.reset();
+        m_wheel_R.reset();
+        m_clock.sleep(3000);
+        m_sequence_num++;
+        break;
+
+    // 前進
+    case 13:
+        m_wheel_L.setPWM(-5);
+        m_wheel_R.setPWM(-5);
+        if (m_guage->getRobotDis() < -0.10)
         {
             m_wheel_L.reset();
             m_wheel_R.reset();
             m_clock.sleep(3000);
-            m_tail->setAngle(1000);
-            m_tail->setMaxSpeed(100);
-            m_wheel_L.setPWM(-70);
-            m_wheel_R.setPWM(-70);
-            m_clock.sleep(210);
+            m_sequence_num++;
+        }
+        break;
 
-            m_tail->setAngle(95);
-            m_tail->setMaxSpeed(90);
+    // 前進
+    case 14:
+        lineRun(0, 4, 1, 25);
+        if (m_guage->getPitchVel() > 40)
+        {
             m_wheel_L.reset();
             m_wheel_R.reset();
-            m_clock.sleep(1000);
-            m_wheel_L.setPWM(-5);
-            m_wheel_R.setPWM(5);
-            m_clock.sleep(500);
             m_sequence_num++;
         }
         break;
 
-    // // 前進
-    case 12:
-        lineRun(0, 8, 1, 15);
-
-        if (m_guage->getRobotDis() > 0.40)
+    // 前進
+    case 15:
+        m_tail->setAngle(-1000);
+        m_tail->setMaxSpeed(55);
+        m_wheel_L.setPWM(43);
+        m_wheel_R.setPWM(43);
+        if (m_guage->getRobotDis() > 0.03)
         {
-            ev3_speaker_play_tone(262, 1000);
             m_sequence_num++;
         }
         break;
 
-    // 停止
-    case 13:
+    // 前進
+    case 16:
+        m_tail->setAngle(50);
+        m_tail->setMaxSpeed(55);
+        m_wheel_L.setPWM(40);
+        m_wheel_R.setPWM(40);
+        if (m_guage->getRobotDis() > 0.13)
+        {
+            m_wheel_L.reset();
+            m_wheel_R.reset();
+            m_clock.sleep(3000);
+            m_sequence_num++;
+        }
+        break;
+
+    // 前進
+    default:
         m_wheel_L.reset();
         m_wheel_R.reset();
-        break;
-
-    default:
         break;
     }
 }
