@@ -99,6 +99,16 @@ void LineTracer::run()
         m_turn *= -1;
     }
 
+    if (m_turn < -m_turn_max)
+    {
+        m_turn = -m_turn_max;
+    }
+
+    if (m_turn > m_turn_max)
+    {
+        m_turn = m_turn_max;
+    }
+
     // 倒立走行と尻尾走行を振り分ける
     if (m_is_inverted)
     {
@@ -151,4 +161,12 @@ void LineTracer::tailRun(int forward_v, int turn_v)
     m_tail_walker->update();
     m_pwm[L] = m_tail_walker->getPwmLeft();
     m_pwm[R] = m_tail_walker->getPwmRight();
+}
+
+/**
+ * 尻尾走行
+ */
+void LineTracer::setTurnMax(float max)
+{
+    m_turn_max = max;
 }

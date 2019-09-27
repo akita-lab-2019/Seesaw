@@ -15,6 +15,7 @@ public:
     void init(float K[3]);
     float calculate(float target_val, float now_val);
     float getTeamValue(int team);
+    void setMax(float max);
 
     enum
     {
@@ -28,6 +29,7 @@ private:
     float m_team_val[3] = {0}; // 各項の値
     float m_integral = 0;      // 積分値
     float m_diff[2] = {0};     // 0: 現在, 1: 過去
+    float m_max = 100;
 };
 
 #endif

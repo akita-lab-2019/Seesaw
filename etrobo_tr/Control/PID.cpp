@@ -40,14 +40,14 @@ float PID::calculate(float target_val, float now_val)
     m_diff[1] = m_diff[0];
     float rtval = m_team_val[P] + m_team_val[I] + m_team_val[D];
 
-    if (rtval < -50)
+    if (rtval < -m_max)
     {
-        rtval = -50;
+        rtval = -m_max;
     }
 
-    if (rtval > 50)
+    if (rtval > m_max)
     {
-        rtval = 50;
+        rtval = m_max;
     }
 
     return rtval;
@@ -62,4 +62,15 @@ float PID::calculate(float target_val, float now_val)
 float PID::getTeamValue(int team)
 {
     return m_team_val[team];
+}
+
+/**
+ * 各項の値を取得する
+ * 4ms周期で呼び出される前提
+ * @param team 項の番号（0:P, 1:I, 2:D）
+ * @return 各項の値
+ */
+void PID::setMax(float max)
+{
+    m_max = max;
 }

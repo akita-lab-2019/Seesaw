@@ -328,8 +328,8 @@ void Seesaw::run()
     case 15:
         m_tail->setAngle(-1000);
         m_tail->setMaxSpeed(55);
-        m_wheel_L.setPWM(43);
-        m_wheel_R.setPWM(43);
+        m_wheel_L.setPWM(50);
+        m_wheel_R.setPWM(50);
         if (m_guage->getRobotDis() > 0.03)
         {
             m_sequence_num++;
@@ -349,6 +349,50 @@ void Seesaw::run()
             m_clock.sleep(3000);
             m_sequence_num++;
         }
+        break;
+
+    // 前進
+    case 17:
+        m_wheel_L.setPWM(30);
+        m_wheel_R.setPWM(30);
+        if (m_guage->getRobotDis() > 0.40)
+        {
+            m_wheel_L.reset();
+            m_wheel_R.reset();
+            m_clock.sleep(3000);
+            m_tail->setAngle(1000);
+            m_tail->setMaxSpeed(100);
+            m_wheel_L.setPWM(-70);
+            m_wheel_R.setPWM(-70);
+            m_clock.sleep(210);
+
+            m_tail->setAngle(95);
+            m_tail->setMaxSpeed(90);
+            m_wheel_L.reset();
+            m_wheel_R.reset();
+            m_clock.sleep(1000);
+            m_wheel_L.setPWM(-5);
+            m_wheel_R.setPWM(5);
+            m_clock.sleep(500);
+            m_sequence_num++;
+        }
+        break;
+
+    // // 前進
+    case 18:
+        lineRun(0, 8, 1, 15);
+
+        if (m_guage->getRobotDis() > 0.40)
+        {
+            ev3_speaker_play_tone(262, 1000);
+            m_sequence_num++;
+        }
+        break;
+
+    // 停止
+    case 19:
+        m_wheel_L.reset();
+        m_wheel_R.reset();
         break;
 
     // 前進
@@ -377,6 +421,7 @@ void Seesaw::downBody()
  */
 void Seesaw::lineRun(bool is_inverted, int forward, int pid_index, int target)
 {
+    m_line_tracer->setTurnMax(2);
     m_line_tracer->setIsInverted(is_inverted);
     m_line_tracer->setForward(forward);
     m_line_tracer->setCurvature(0);

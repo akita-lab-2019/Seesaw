@@ -33,6 +33,7 @@ public:
     void setCurvature(float curvature);
     void setPidParm(float pid_param[3]);
     void setColorTarget(float target);
+    void setTurnMax(float max);
 
     enum
     {
@@ -60,6 +61,7 @@ private:
     float m_color_target; // カラーセンサの目標値
     bool m_is_inverted;   // 倒立走行の有無
     int m_pwm[2];         // ホイールの出力指令値
+    float m_turn_max = 100;
 };
 
 #endif // EV3_APP_LINETRACER_H_
