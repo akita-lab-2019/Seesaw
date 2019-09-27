@@ -292,8 +292,8 @@ void Seesaw::run()
         m_wheel_R.setPWM(-30);
         m_clock.sleep(200);
 
-        m_tail->setAngle(115);
-        m_tail->setMaxSpeed(40);
+        m_tail->setAngle(108);
+        m_tail->setMaxSpeed(90);
         m_wheel_L.reset();
         m_wheel_R.reset();
         m_clock.sleep(3000);
@@ -353,9 +353,11 @@ void Seesaw::run()
 
     // 前進
     case 17:
+        m_tail->setAngle(55);
+        m_tail->setMaxSpeed(100);
         m_wheel_L.setPWM(30);
         m_wheel_R.setPWM(30);
-        if (m_guage->getRobotDis() > 0.40)
+        if (m_guage->getRobotDis() > 0.35)
         {
             m_wheel_L.reset();
             m_wheel_R.reset();
@@ -382,7 +384,7 @@ void Seesaw::run()
     case 18:
         lineRun(0, 8, 1, 15);
 
-        if (m_guage->getRobotDis() > 0.40)
+        if (m_guage->getRobotDis() > 0.35)
         {
             ev3_speaker_play_tone(262, 1000);
             m_sequence_num++;
